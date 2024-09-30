@@ -1,4 +1,6 @@
 const Total = ({ course }) => {
+    // calculez la somme des exercices avec la méthode array reduce.
+
     const initialValue = 0;
 
     const total = course.parts.reduce(
