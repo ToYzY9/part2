@@ -1,30 +1,30 @@
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
+import axios from "axios";
 import App from "./App.jsx";
 
-const notes = [
-    {
-        id: 1,
-        content: "HTML is easy",
-        date: "2019-05-30T17:30:31.098Z",
-        important: true,
-    },
-    {
-        id: 2,
-        content: "Browser can execute only JavaScript",
-        date: "2019-05-30T18:39:34.091Z",
-        important: false,
-    },
-    {
-        id: 3,
-        content: "GET and POST are the most important methods of HTTP protocol",
-        date: "2019-05-30T19:20:14.298Z",
-        important: true,
-    },
-];
+const promise = axios.get("http://localhost:3001/notes");
+console.log(promise);
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-    <StrictMode>
-        <App notes={notes} />
-    </StrictMode>
-);
+promise.then((response) => {
+    console.log("response", response);
+});
+
+axios.get("http://localhost:3001/notes").then((response) => {
+    const notes = response.data;
+    console.log("notes", notes);
+});
+
+const promise2 = axios.get("http://localhost:3001/foobar");
+console.log(promise2);
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+
+axios.get("http://localhost:3001/notes").then((response) => {
+    const notes = response.data;
+    root.render(
+        <StrictMode>
+            <App notes={notes} />
+        </StrictMode>
+    );
+});
