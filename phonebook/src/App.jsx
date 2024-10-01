@@ -4,13 +4,24 @@ const App = () => {
     const [persons, setPersons] = useState([{ name: "Arto Hellas" }]);
     const [newName, setNewName] = useState("");
 
+    const uniquePersons = persons.filter((person, index) => {
+        return index === persons.findIndex((pers) => person.name === pers.name);
+    });
+
     const addName = (evt) => {
         evt.preventDefault();
         const newPerson = {
             name: newName,
         };
-        setPersons(persons.concat(newPerson));
-        setNewName("");
+
+        uniquePersons.map((person) => {
+            if (newPerson.name === person.name) {
+                alert(`${newPerson.name} is already added to phonebook`);
+            } else {
+                setPersons(persons.concat(newPerson));
+                setNewName("");
+            }
+        });
     };
 
     return (
@@ -29,7 +40,7 @@ const App = () => {
                 </div>
             </form>
             <h2>Numbers</h2>
-            {persons.map((person) => {
+            {uniquePersons.map((person) => {
                 return <p key={person.name}>{person.name}</p>;
             })}
         </div>
