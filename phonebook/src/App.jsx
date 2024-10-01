@@ -1,10 +1,44 @@
 import { useState } from "react";
 
+const Filter = ({ search, handleSearch }) => {
+    return (
+        <div>
+            filter shown with <input value={search} onChange={handleSearch} />
+        </div>
+    );
+};
 const Person = ({ person }) => {
     return (
         <p>
             {person.name} {person.number}
         </p>
+    );
+};
+const Persons = ({ listPersons }) => {
+    return listPersons.map((person) => {
+        return <Person key={person.id} person={person} />;
+    });
+};
+
+const PersonForm = ({
+    addName,
+    newName,
+    newNumber,
+    handleName,
+    handleNumber,
+}) => {
+    return (
+        <form onSubmit={addName}>
+            <div>
+                Name: <input value={newName} onChange={handleName} />
+            </div>
+            <div>
+                Number: <input value={newNumber} onChange={handleNumber} />
+            </div>
+            <div>
+                <button type="submit">Add</button>
+            </div>
+        </form>
     );
 };
 
@@ -20,7 +54,12 @@ const App = () => {
     const [search, setSearch] = useState("");
 
     const uniquePersons = persons.filter((person, index) => {
-        return index === persons.findIndex((pers) => person.name === pers.name);
+        return (
+            index ===
+            persons.findIndex(
+                (pers) => person.name.toLowerCase() === pers.name.toLowerCase()
+            )
+        );
     });
 
     const searchPersons = (pArr, pQuery) => {
@@ -38,52 +77,46 @@ const App = () => {
         };
 
         uniquePersons.map((person) => {
-            if (newPerson.name === person.name) {
-                alert(`${newPerson.name} is already added to phonebook`);
+            if (newPerson.name.toLowerCase() === person.name.toLowerCase()) {
+                return alert(`${newPerson.name} is already added to phonebook`);
             } else {
-                setPersons(persons.concat(newPerson));
-                setNewName("");
-                setNewNumber("");
+                return (
+                    setPersons(persons.concat(newPerson)),
+                    setNewName(""),
+                    setNewNumber("")
+                );
             }
         });
+    };
+
+    const handleName = (e) => {
+        setNewName(e.target.value);
+    };
+
+    const handleNumber = (e) => {
+        setNewNumber(e.target.value);
+    };
+
+    const handleSearch = (e) => {
+        setSearch(e.target.value);
     };
 
     const listPersons = searchPersons(uniquePersons, search);
 
     return (
         <div>
-            <h2>Phonebook</h2>
-            <div>
-                filter shown with{" "}
-                <input
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
-            </div>
+            <h1>Phonebook</h1>
+            <Filter search={search} handleSearch={handleSearch} />
             <h2>Add a new</h2>
-            <form onSubmit={addName}>
-                <div>
-                    Name:{" "}
-                    <input
-                        value={newName}
-                        onChange={(e) => setNewName(e.target.value)}
-                    />
-                </div>
-                <div>
-                    Number:{" "}
-                    <input
-                        value={newNumber}
-                        onChange={(e) => setNewNumber(e.target.value)}
-                    />
-                </div>
-                <div>
-                    <button type="submit">Add</button>
-                </div>
-            </form>
+            <PersonForm
+                addName={addName}
+                newName={newName}
+                newNumber={newNumber}
+                handleName={handleName}
+                handleNumber={handleNumber}
+            />
             <h2>Numbers</h2>
-            {listPersons.map((person) => {
-                return <Person key={person.id} person={person} />;
-            })}
+            <Persons listPersons={listPersons} />
         </div>
     );
 };
