@@ -1,9 +1,8 @@
 import { useState } from "react";
 
-const Numbers = (props) => {
-    const { person } = props;
+const Person = ({ person }) => {
     return (
-        <p key={person.name}>
+        <p>
             {person.name} {person.number}
         </p>
     );
@@ -13,13 +12,22 @@ const App = () => {
     const [persons, setPersons] = useState([
         { name: "Arto Hellas", number: "040-123456", id: 1 },
         { name: "Ada Lovelace", number: "39-44-5323523", id: 2 },
+        { name: "Dan Abramov", number: "12-43-234345", id: 3 },
+        { name: "Mary Poppendieck", number: "39-23-6423122", id: 4 },
     ]);
     const [newName, setNewName] = useState("");
     const [newNumber, setNewNumber] = useState("");
+    const [search, setSearch] = useState("");
 
     const uniquePersons = persons.filter((person, index) => {
         return index === persons.findIndex((pers) => person.name === pers.name);
     });
+
+    const searchPersons = (pArr, pQuery) => {
+        return pArr.filter((el) => {
+            return el.name.toLowerCase().includes(pQuery.toLowerCase());
+        });
+    };
 
     const addName = (event) => {
         event.preventDefault();
@@ -40,9 +48,19 @@ const App = () => {
         });
     };
 
+    const listPersons = searchPersons(uniquePersons, search);
+
     return (
         <div>
             <h2>Phonebook</h2>
+            <div>
+                filter shown with{" "}
+                <input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
+            </div>
+            <h2>Add a new</h2>
             <form onSubmit={addName}>
                 <div>
                     Name:{" "}
@@ -63,8 +81,8 @@ const App = () => {
                 </div>
             </form>
             <h2>Numbers</h2>
-            {uniquePersons.map((person) => {
-                return <Numbers key={person.name} person={person} />;
+            {listPersons.map((person) => {
+                return <Person key={person.id} person={person} />;
             })}
         </div>
     );
