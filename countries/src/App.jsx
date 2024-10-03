@@ -41,7 +41,20 @@ const Country = ({ country }) => {
 };
 
 const CountriesLine = ({ country }) => {
-    return <div>{country.name.common}</div>;
+    const [showDetails, setShowDetails] = useState(false);
+
+    const showCountryDetails = () => {
+        setShowDetails(!showDetails);
+    };
+    return (
+        <div>
+            <span>{country.name.common}</span>
+            <button onClick={showCountryDetails}>
+                {showDetails ? "Hide" : "Show"}
+            </button>
+            {showDetails && <Country country={country} />}
+        </div>
+    );
 };
 
 const Countries = ({ listCountries }) => {
@@ -53,21 +66,12 @@ const Countries = ({ listCountries }) => {
                 <p>Too many matches, specify another filter</p>
             ) : (
                 listCountries.map((country) => {
-                    if (listCountries.length === 1) {
-                        return (
-                            <Country
-                                key={country.name.common}
-                                country={country}
-                            />
-                        );
-                    } else if (listCountries.length <= 10) {
-                        return (
-                            <CountriesLine
-                                key={country.name.common}
-                                country={country}
-                            />
-                        );
-                    }
+                    return (
+                        <CountriesLine
+                            key={country.name.common}
+                            country={country}
+                        />
+                    );
                 })
             )}
         </div>
