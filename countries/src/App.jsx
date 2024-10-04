@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+const apiKey = import.meta.env.VITE_API_KEY;
+
 const FilterCountry = ({ search, handleSearch }) => {
     return (
         <div>
@@ -24,6 +26,33 @@ const Languages = ({ country }) => {
 };
 
 const Country = ({ country }) => {
+    const [weatherApp, setWeatherApp] = useState([]);
+
+    const options = {
+        method: "GET",
+        url: "https://api.openweathermap.org/data/2.5/weather",
+        params: {
+            q: `${country.capital[0]}`,
+            appid: apiKey,
+            units: "metric",
+        },
+    };
+
+    useEffect(() => {
+        axios
+            .request(options)
+            .then((res) => {
+                setWeatherApp(res.data);
+            })
+            .catch((err) => console.log("error", err));
+    }, []);
+
+    const { main, weather, wind } = weatherApp;
+
+    if (!main || !weather || !wind) {
+        return <p>Loading...</p>;
+    }
+
     return (
         <div>
             <h1>{country.name.common}</h1>
@@ -36,6 +65,15 @@ const Country = ({ country }) => {
                 src={country.flags.png}
                 alt={country.flags.alt}
             />
+            <h3>Weather in {country.capital[0]}</h3>
+            <p>Temperature {`${main.temp}° Celcius`}</p>
+            <div>
+                <img
+                    src={`/public/img/${weather[0].icon}.png`}
+                    alt={`${weather[0].description}`}
+                />
+            </div>
+            <p>{`Wind ${wind.speed} m/s`}</p>
         </div>
     );
 };
@@ -60,7 +98,7 @@ const Countries = ({ listCountries }) => {
                                 country={country}
                             />
                         );
-                    } else if (listCountries.length <= 10) {
+                    } else {
                         return (
                             <CountriesLine
                                 key={country.name.common}
