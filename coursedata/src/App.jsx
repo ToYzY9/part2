@@ -46,6 +46,12 @@ const App = () => {
         });
     };
 
+    const name = `Leevi`;
+    const age = 10;
+
+    const person = { name, age };
+    console.log("person => ", person.name, ` ${person.age} ans`);
+
     return (
         <div>
             <h1>Notes</h1>
