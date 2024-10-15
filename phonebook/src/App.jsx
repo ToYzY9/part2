@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import phonebookService from "./services/phonebook";
 
 const Filter = ({ search, handleSearch }) => {
     return (
         <div>
-            filter shown with <input value={search} onChange={handleSearch} />
+            Filter shown with <input value={search} onChange={handleSearch} />
         </div>
     );
 };
@@ -50,9 +50,9 @@ const App = () => {
     const [search, setSearch] = useState("");
 
     useEffect(() => {
-        axios
-            .get("http://localhost:3001/persons")
-            .then((res) => setPersons(res.data));
+        phonebookService.getAll().then((initialPersons) => {
+            setPersons(initialPersons);
+        });
     }, []);
 
     const uniquePersons = persons.filter((person, index) => {
@@ -83,13 +83,10 @@ const App = () => {
             }
         });
 
-        axios
-            .post("http://localhost:3001/persons", newPerson)
-            .then(
-                (response) => setPersons(uniquePersons.concat(response.data)),
-                setNewName(""),
-                setNewNumber("")
-            );
+        phonebookService.create(newPerson).then((returnedPerson) => {
+            setPersons(uniquePersons.concat(returnedPerson));
+            setNewName(""), setNewNumber("");
+        });
     };
 
     const handleName = (e) => {
