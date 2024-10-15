@@ -75,20 +75,21 @@ const App = () => {
         const newPerson = {
             name: newName,
             number: newNumber,
-            id: uniquePersons.length + 1,
         };
 
         uniquePersons.map((person) => {
             if (newPerson.name.toLowerCase() === person.name.toLowerCase()) {
                 return alert(`${newPerson.name} is already added to phonebook`);
-            } else {
-                return (
-                    setPersons(persons.concat(newPerson)),
-                    setNewName(""),
-                    setNewNumber("")
-                );
             }
         });
+
+        axios
+            .post("http://localhost:3001/persons", newPerson)
+            .then(
+                (response) => setPersons(uniquePersons.concat(response.data)),
+                setNewName(""),
+                setNewNumber("")
+            );
     };
 
     const handleName = (e) => {
