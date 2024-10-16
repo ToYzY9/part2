@@ -8,10 +8,23 @@ const Filter = ({ search, handleSearch }) => {
         </div>
     );
 };
+
+const Button = ({ text, handleClick }) => {
+    return <button onClick={handleClick}>{text}</button>;
+};
+
 const Person = ({ person }) => {
+    const handleDelete = (e) => {
+        if (window.confirm(`Delete ${person.name} ?`)) {
+            phonebookService.remove(person.id);
+            window.location.reload();
+        }
+    };
+
     return (
         <p>
-            {person.name} {person.number}
+            {person.name} {person.number}{" "}
+            <Button handleClick={handleDelete} text="delete" />
         </p>
     );
 };

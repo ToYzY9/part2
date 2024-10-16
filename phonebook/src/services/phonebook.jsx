@@ -11,7 +11,15 @@ const create = async (newObject) => {
     return request.then((res) => res.data);
 };
 
+const remove = async (id) => {
+    const request = axios.delete(`${baseUrl}/${id}`);
+    return request.then((res) => {
+        console.log("User deleted successfully:", res.data);
+    });
+};
+
 export default {
     getAll,
     create,
+    remove,
 };
