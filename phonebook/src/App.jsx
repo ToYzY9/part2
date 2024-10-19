@@ -14,7 +14,7 @@ const Button = ({ text, handleClick }) => {
 };
 
 const Person = ({ person }) => {
-    const handleDelete = (e) => {
+    const handleDelete = () => {
         if (window.confirm(`Delete ${person.name} ?`)) {
             phonebookService.remove(person.id);
             window.location.reload();
@@ -85,21 +85,50 @@ const App = () => {
 
     const addName = (event) => {
         event.preventDefault();
+
         const newPerson = {
             name: newName,
             number: newNumber,
         };
 
-        uniquePersons.map((person) => {
-            if (newPerson.name.toLowerCase() === person.name.toLowerCase()) {
-                return alert(`${newPerson.name} is already added to phonebook`);
-            }
-        });
+        if (newPerson.name !== "" && newPerson.number !== "") {
+            phonebookService.create(newPerson).then((returnedPerson) => {
+                setPersons(uniquePersons.concat(returnedPerson));
+                setNewName(""), setNewNumber("");
+            });
 
-        phonebookService.create(newPerson).then((returnedPerson) => {
-            setPersons(uniquePersons.concat(returnedPerson));
-            setNewName(""), setNewNumber("");
-        });
+            uniquePersons.map((person) => {
+                if (
+                    newPerson.name.toLowerCase() === person.name.toLowerCase()
+                ) {
+                    if (
+                        window.confirm(
+                            `${newPerson.name} is already added to phonebook, replace the old number with a new one ?`
+                        )
+                    ) {
+                        const newObject = {
+                            ...person,
+                            number: newPerson.number,
+                        };
+                        phonebookService
+                            .adit(person.id, newObject)
+                            .then((returnedPerson) => {
+                                setPersons(
+                                    uniquePersons.concat(returnedPerson)
+                                );
+                                setNewName(""), setNewNumber("");
+                                window.location.reload();
+                            });
+                    }
+                }
+            });
+        } else {
+            if (newPerson.name === "") {
+                alert("Invalid name");
+            } else if (newPerson.number === "") {
+                alert("Invalid number");
+            }
+        }
     };
 
     const handleName = (e) => {

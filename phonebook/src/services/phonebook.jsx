@@ -18,8 +18,14 @@ const remove = async (id) => {
     });
 };
 
+const adit = async (id, newData) => {
+    const request = axios.put(`${baseUrl}/${id}`, newData);
+    return request.then((res) => res.data);
+};
+
 export default {
     getAll,
     create,
     remove,
+    adit,
 };
