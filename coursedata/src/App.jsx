@@ -10,6 +10,24 @@ const Notification = ({ message }) => {
     return <div className="error">{message}</div>;
 };
 
+const Footer = () => {
+    const footerStyle = {
+        color: "green",
+        fontStyle: "italic",
+        fontSize: 16,
+    };
+
+    return (
+        <div style={footerStyle}>
+            <br />
+            <em>
+                Note app, Department of Computer Science, University of Helsinki
+                2022
+            </em>
+        </div>
+    );
+};
+
 const App = () => {
     const [notes, setNotes] = useState([]);
     const [newNote, setNewNote] = useState("a new note...");
@@ -88,6 +106,7 @@ const App = () => {
                 <input value={newNote} onChange={handleNoteChange} />
                 <button type="submit">Save</button>
             </form>
+            <Footer />
         </div>
     );
 };
