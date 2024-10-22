@@ -56,11 +56,30 @@ const PersonForm = ({
     );
 };
 
+const Notification = ({ message }) => {
+    const successStyle = {
+        color: "green",
+        background: "lightgrey",
+        fontSize: 20,
+        borderStyle: "solid",
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 10,
+    };
+
+    if (message === null) {
+        return null;
+    }
+
+    return <div style={message !== null ? successStyle : ""}>{message}</div>;
+};
+
 const App = () => {
     const [persons, setPersons] = useState([]);
     const [newName, setNewName] = useState("");
     const [newNumber, setNewNumber] = useState("");
     const [search, setSearch] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
         phonebookService.getAll().then((initialPersons) => {
@@ -85,7 +104,6 @@ const App = () => {
 
     const addName = (event) => {
         event.preventDefault();
-
         const newPerson = {
             name: newName,
             number: newNumber,
@@ -95,6 +113,10 @@ const App = () => {
             phonebookService.create(newPerson).then((returnedPerson) => {
                 setPersons(uniquePersons.concat(returnedPerson));
                 setNewName(""), setNewNumber("");
+                setErrorMessage(`Added ${newPerson.name}`);
+                setTimeout(() => {
+                    setErrorMessage(null);
+                }, 5000);
             });
 
             uniquePersons.map((person) => {
@@ -117,7 +139,13 @@ const App = () => {
                                     uniquePersons.concat(returnedPerson)
                                 );
                                 setNewName(""), setNewNumber("");
-                                window.location.reload();
+                                setErrorMessage(
+                                    `Successful ${newPerson.number} update`
+                                );
+                                setTimeout(() => {
+                                    setErrorMessage(null);
+                                    window.location.reload();
+                                }, 5000);
                             });
                     }
                 }
@@ -148,6 +176,7 @@ const App = () => {
     return (
         <div>
             <h1>Phonebook</h1>
+            {errorMessage ? <Notification message={errorMessage} /> : ""}
             <Filter search={search} handleSearch={handleSearch} />
             <h2>Add a new</h2>
             <PersonForm
