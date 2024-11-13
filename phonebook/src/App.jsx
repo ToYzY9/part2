@@ -56,7 +56,7 @@ const PersonForm = ({
     );
 };
 
-const Notification = ({ message }) => {
+const Success = ({ message }) => {
     const successStyle = {
         color: "green",
         background: "lightgrey",
@@ -74,11 +74,30 @@ const Notification = ({ message }) => {
     return <div style={message !== null ? successStyle : ""}>{message}</div>;
 };
 
+const Error = ({ message }) => {
+    const errorStyle = {
+        color: "red",
+        background: "lightgrey",
+        fontSize: 20,
+        borderStyle: "solid",
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 10,
+    };
+
+    if (message === null) {
+        return null;
+    }
+
+    return <div style={message !== null ? errorStyle : ""}>{message}</div>;
+};
+
 const App = () => {
     const [persons, setPersons] = useState([]);
     const [newName, setNewName] = useState("");
     const [newNumber, setNewNumber] = useState("");
     const [search, setSearch] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
@@ -113,10 +132,10 @@ const App = () => {
             phonebookService.create(newPerson).then((returnedPerson) => {
                 setPersons(uniquePersons.concat(returnedPerson));
                 setNewName(""), setNewNumber("");
-                setErrorMessage(`Added ${newPerson.name}`);
+                setSuccessMessage(`Added ${newPerson.name}`);
                 setTimeout(() => {
-                    setErrorMessage(null);
-                }, 5000);
+                    setSuccessMessage(null);
+                }, 2000);
             });
 
             uniquePersons.map((person) => {
@@ -133,14 +152,22 @@ const App = () => {
                             number: newPerson.number,
                         };
                         phonebookService
-                            .adit(person.id, newObject)
+                            .edit(person.id)
                             .then((returnedPerson) => {
                                 setPersons(
-                                    uniquePersons.concat(returnedPerson)
+                                    uniquePersons.concat((person) =>
+                                        person.id !== id
+                                            ? person
+                                            : returnedPerson
+                                    )
                                 );
-                                setNewName(""), setNewNumber("");
+                            })
+                            .catch((err) => {
+                                console.log(
+                                    `Information of ${newPerson.name} has already been deleted from server`
+                                );
                                 setErrorMessage(
-                                    `Successful ${newPerson.number} update`
+                                    `Information of ${newPerson.name} has already been deleted from server`
                                 );
                                 setTimeout(() => {
                                     setErrorMessage(null);
@@ -176,7 +203,13 @@ const App = () => {
     return (
         <div>
             <h1>Phonebook</h1>
-            {errorMessage ? <Notification message={errorMessage} /> : ""}
+            {successMessage ? (
+                <Success message={successMessage} />
+            ) : errorMessage ? (
+                <Error message={errorMessage} />
+            ) : (
+                ""
+            )}
             <Filter search={search} handleSearch={handleSearch} />
             <h2>Add a new</h2>
             <PersonForm
